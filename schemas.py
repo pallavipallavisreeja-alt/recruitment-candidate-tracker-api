@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
 
+
 class CandidateBase(BaseModel):
     name: str
     email: EmailStr
@@ -9,8 +10,10 @@ class CandidateBase(BaseModel):
     experience_years: Optional[int] = None
     status: Optional[str] = "Applied"
 
+
 class CandidateCreate(CandidateBase):
     pass
+
 
 class CandidateResponse(CandidateBase):
     id: int

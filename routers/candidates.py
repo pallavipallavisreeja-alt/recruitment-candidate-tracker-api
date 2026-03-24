@@ -1,20 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import Optional, List
+
 import crud, schemas
-from database import SessionLocal
+from database import get_db
+
 
 router = APIRouter(
     prefix="/api/v1/candidates",
     tags=["Candidates"]
 )
-
-# Database Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 # POST - Create Candidate
@@ -29,7 +24,6 @@ def create_candidate(candidate: schemas.CandidateCreate, db: Session = Depends(g
 
 
 # GET - All Candidates
-from typing import Optional, List
 @router.get("/", response_model=List[schemas.CandidateResponse])
 def get_candidates(name: Optional[str] = None, db: Session = Depends(get_db)):
     return crud.get_all_candidates(db, name)
