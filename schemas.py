@@ -1,7 +1,6 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from datetime import datetime
 from typing import Optional
-
 
 class CandidateBase(BaseModel):
     name: str
@@ -10,14 +9,11 @@ class CandidateBase(BaseModel):
     experience_years: Optional[int] = None
     status: Optional[str] = "Applied"
 
-
 class CandidateCreate(CandidateBase):
     pass
-
 
 class CandidateResponse(CandidateBase):
     id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
