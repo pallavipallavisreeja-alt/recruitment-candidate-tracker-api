@@ -27,3 +27,5 @@ jobs:
       - name: Run Tests
         run: |
           pytest || true
+      - name: Detect Controllers
+        run: python detect_controllers.py
