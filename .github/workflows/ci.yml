@@ -29,3 +29,8 @@ jobs:
           pytest || true
       - name: Detect Controllers
         run: python detect_controllers.py
+      - name: Extract Endpoints
+        run: python extract_endpoints.py
+      - name: Generate OpenAPI Spec
+        run: python generate_openapi.py
+

@@ -1,0 +1,22 @@
+[
+  {
+    "method": "GET",
+    "path": "/",
+    "file": "routers\\candidates.py"
+  },
+  {
+    "method": "GET",
+    "path": "/{candidate_id}",
+    "file": "routers\\candidates.py"
+  },
+  {
+    "method": "PUT",
+    "path": "/{candidate_id}",
+    "file": "routers\\candidates.py"
+  },
+  {
+    "method": "DELETE",
+    "path": "/{candidate_id}",
+    "file": "routers\\candidates.py"
+  }
+]
