@@ -1,9 +1,18 @@
 .venv/
+node_modules/
+build/
 
 __pycache__/
 *.pyc
 
 recruitment.db
+recruitment_app.db
+recruitment.db-journal
+recruitment_app.db-journal
+recruitment_test.db
+recruitment_test.db-journal
+documentation_keeper.log
+detected_controllers.json
 
 .pytest_cache/
 

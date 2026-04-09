@@ -1,42 +1,402 @@
 {
-  "openapi": "3.0.0",
+  "openapi": "3.0.3",
   "info": {
     "title": "Recruitment Candidate Tracker API",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Dynamically generated OpenAPI specification for the candidate tracker service."
   },
+  "servers": [
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
   "paths": {
-    "/": {
+    "/api/v1/candidates": {
       "get": {
-        "summary": "GET /",
+        "summary": "List Candidates",
+        "description": "List candidate records and optionally filter them using query parameters.",
+        "operationId": "get_get_candidates",
+        "tags": [
+          "Candidates"
+        ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Candidate list retrieved successfully.",
+            "headers": {
+              "X-Total-Count": {
+                "description": "Total number of matching candidates before pagination.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Candidate"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Case-insensitive candidate name filter."
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter candidates by status."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "description": "Number of records to skip."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "description": "Maximum records to return."
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at",
+                "name",
+                "experience",
+                "status"
+              ]
+            },
+            "description": "Sort field."
+          },
+          {
+            "name": "sort_order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction."
+          }
+        ]
+      },
+      "post": {
+        "summary": "Post Candidate",
+        "description": "Create a new candidate record and persist it to the database.",
+        "operationId": "post_create_candidate",
+        "tags": [
+          "Candidates"
+        ],
+        "responses": {
+          "201": {
+            "description": "Candidate created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Candidate"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CandidateCreate"
+              }
+            }
           }
         }
       }
     },
-    "/{candidate_id}": {
+    "/api/v1/candidates/{candidate_id}": {
+      "delete": {
+        "summary": "Delete Candidate",
+        "description": "Delete the targeted candidate record from the database.",
+        "operationId": "delete_delete_candidate",
+        "tags": [
+          "Candidates"
+        ],
+        "responses": {
+          "204": {
+            "description": "Candidate deleted successfully."
+          }
+        },
+        "parameters": [
+          {
+            "name": "candidate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Path parameter `candidate_id`."
+          }
+        ]
+      },
       "get": {
-        "summary": "GET /{candidate_id}",
+        "summary": "Get Candidate",
+        "description": "Fetch a single candidate record by identifier.",
+        "operationId": "get_get_candidate",
+        "tags": [
+          "Candidates"
+        ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Candidate retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Candidate"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "candidate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Path parameter `candidate_id`."
+          }
+        ]
+      },
+      "patch": {
+        "summary": "Patch Candidate",
+        "description": "Partially update an existing candidate record.",
+        "operationId": "patch_patch_candidate",
+        "tags": [
+          "Candidates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Candidate updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Candidate"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "candidate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Path parameter `candidate_id`."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CandidateUpdate"
+              }
+            }
           }
         }
       },
       "put": {
-        "summary": "PUT /{candidate_id}",
+        "summary": "Put Candidate",
+        "description": "Update an existing candidate record using the payload supplied by the caller.",
+        "operationId": "put_update_candidate",
+        "tags": [
+          "Candidates"
+        ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Candidate updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Candidate"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "candidate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Path parameter `candidate_id`."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CandidateUpdate"
+              }
+            }
           }
         }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Candidate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Ava Patel"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "ava@example.com"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Python",
+              "FastAPI"
+            ]
+          },
+          "experience": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 5
+          },
+          "status": {
+            "type": "string",
+            "example": "screening"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "skills",
+          "experience",
+          "status",
+          "created_at"
+        ]
       },
-      "delete": {
-        "summary": "DELETE /{candidate_id}",
-        "responses": {
-          "200": {
-            "description": "Successful response"
+      "CandidateCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Ava Patel"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "ava@example.com"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Python",
+              "FastAPI"
+            ]
+          },
+          "experience": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 5
+          },
+          "status": {
+            "type": "string",
+            "example": "screening"
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ]
+      },
+      "CandidateUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "experience": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string"
           }
         }
       }

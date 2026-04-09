@@ -1,56 +1,82 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from typing import Optional, List
+"""Candidate API routes."""
 
-import crud, schemas
+from __future__ import annotations
+
+from typing import Literal
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status as http_status
+from sqlalchemy.orm import Session
+
+import crud
+import schemas
 from database import get_db
 
-
-router = APIRouter(
-    prefix="/api/v1/candidates",
-    tags=["Candidates"]
-)
+router = APIRouter(prefix="/api/v1/candidates", tags=["Candidates"])
 
 
-# POST - Create Candidate
 @router.post(
     "/",
-    response_model=schemas.CandidateResponse,
-    summary="Create a new candidate",
-    description="This API creates a new candidate and stores it in the database."
+    response_model=schemas.CandidateRead,
+    status_code=http_status.HTTP_201_CREATED,
+    summary="Create a candidate",
 )
 def create_candidate(candidate: schemas.CandidateCreate, db: Session = Depends(get_db)):
-    return crud.create_candidate(db, candidate)
+    try:
+        return crud.create_candidate(db, candidate)
+    except crud.DuplicateCandidateError as exc:
+        raise HTTPException(status_code=http_status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
 
-# GET - All Candidates
-@router.get("/", response_model=List[schemas.CandidateResponse])
-def get_candidates(name: Optional[str] = None, db: Session = Depends(get_db)):
-    return crud.get_all_candidates(db, name)
+@router.get("/", response_model=list[schemas.CandidateRead], summary="List candidates")
+def get_candidates(
+    response: Response,
+    name: str | None = Query(default=None, description="Case-insensitive candidate name filter"),
+    status: schemas.CandidateStatus | None = Query(default=None, description="Filter by candidate status"),
+    skip: int = Query(default=0, ge=0, description="Number of records to skip"),
+    limit: int = Query(default=10, ge=1, le=100, description="Maximum records to return"),
+    sort_by: Literal["created_at", "name", "experience", "status"] = Query(
+        default="created_at", description="Sort field"
+    ),
+    sort_order: Literal["asc", "desc"] = Query(default="desc", description="Sort direction"),
+    db: Session = Depends(get_db),
+):
+    items, total = crud.list_candidates(db, name, status, skip, limit, sort_by, sort_order)
+    response.headers["X-Total-Count"] = str(total)
+    return items
 
 
-# GET - Single Candidate
-@router.get("/{candidate_id}", response_model=schemas.CandidateResponse)
+@router.get("/{candidate_id}", response_model=schemas.CandidateRead, summary="Get candidate")
 def get_candidate(candidate_id: int, db: Session = Depends(get_db)):
-    candidate = crud.get_candidate_by_id(db, candidate_id)
-    if not candidate:
-        raise HTTPException(status_code=404, detail="Candidate not found")
-    return candidate
+    try:
+        return crud.get_candidate_by_id(db, candidate_id)
+    except crud.CandidateNotFoundError as exc:
+        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
-# PUT - Update Candidate
-@router.put("/{candidate_id}", response_model=schemas.CandidateResponse)
-def update_candidate(candidate_id: int, candidate: schemas.CandidateCreate, db: Session = Depends(get_db)):
-    updated_candidate = crud.update_candidate(db, candidate_id, candidate)
-    if not updated_candidate:
-        raise HTTPException(status_code=404, detail="Candidate not found")
-    return updated_candidate
+@router.put("/{candidate_id}", response_model=schemas.CandidateRead, summary="Update candidate")
+def update_candidate(candidate_id: int, candidate: schemas.CandidateUpdate, db: Session = Depends(get_db)):
+    try:
+        return crud.update_candidate(db, candidate_id, candidate)
+    except crud.CandidateNotFoundError as exc:
+        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    except crud.DuplicateCandidateError as exc:
+        raise HTTPException(status_code=http_status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
 
-# DELETE - Remove Candidate
-@router.delete("/{candidate_id}")
+@router.patch("/{candidate_id}", response_model=schemas.CandidateRead, summary="Patch candidate")
+def patch_candidate(candidate_id: int, candidate: schemas.CandidateUpdate, db: Session = Depends(get_db)):
+    try:
+        return crud.patch_candidate(db, candidate_id, candidate)
+    except crud.CandidateNotFoundError as exc:
+        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    except crud.DuplicateCandidateError as exc:
+        raise HTTPException(status_code=http_status.HTTP_409_CONFLICT, detail=str(exc)) from exc
+
+
+@router.delete("/{candidate_id}", status_code=http_status.HTTP_204_NO_CONTENT, summary="Delete candidate")
 def delete_candidate(candidate_id: int, db: Session = Depends(get_db)):
-    candidate = crud.delete_candidate(db, candidate_id)
-    if not candidate:
-        raise HTTPException(status_code=404, detail="Candidate not found")
-    return {"message": "Candidate deleted successfully"}
+    try:
+        crud.delete_candidate(db, candidate_id)
+    except crud.CandidateNotFoundError as exc:
+        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    return Response(status_code=http_status.HTTP_204_NO_CONTENT)
