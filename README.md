@@ -111,3 +111,5 @@ Backend:
 - The scripts log controller and endpoint changes to `documentation_keeper.log`.
 - The generated OpenAPI and endpoint snapshots are versioned through the database so you can inspect change history.
 - A good dashboard UI next step would be a small React or Next.js admin panel with candidate cards, filters by status, and an OpenAPI viewer side panel.
+
+
