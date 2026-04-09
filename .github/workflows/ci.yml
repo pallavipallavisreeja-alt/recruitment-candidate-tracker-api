@@ -2,6 +2,8 @@ name: FastAPI CI Pipeline
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -45,3 +47,18 @@ jobs:
             detected_endpoints.json
             endpoint_diff.json
             openapi_generated.json
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Render Deploy Hook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL secret is not set."
+            exit 1
+          fi
+          curl -fsSL -X POST "$RENDER_DEPLOY_HOOK_URL"

@@ -29,6 +29,7 @@ Recruitment Candidate Tracker API built with FastAPI, SQLAlchemy, and Pydantic.
 - `Dockerfile` - Backend container image
 - `docker-compose.yml` - Local backend orchestration
 - `.github/workflows/ci.yml` - CI pipeline
+- `render.yaml` - Render service definition
 
 ## Local Setup
 
@@ -104,6 +105,19 @@ docker compose up --build
 
 Backend:
 - `http://127.0.0.1:8000/docs`
+
+## Deployment
+
+The GitHub Actions workflow now includes a deploy job for `main` that triggers a Render deploy hook.
+
+To enable CD:
+
+1. Create a Render web service using this repository.
+2. Add a GitHub secret named `RENDER_DEPLOY_HOOK_URL`.
+3. Copy the Render deploy hook URL into that secret.
+4. Push to `main`.
+
+When the workflow passes, GitHub Actions will trigger the Render deployment automatically.
 
 ## Bonus Notes
 
