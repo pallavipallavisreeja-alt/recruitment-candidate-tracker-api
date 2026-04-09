@@ -8,6 +8,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from api_history import compare_endpoint_snapshots, record_artifact_version
 from detect_controllers import find_controller_files
 
 ROOT = Path(__file__).resolve().parent
@@ -137,7 +138,7 @@ def _collect_endpoints(file_path: Path) -> list[dict[str, Any]]:
     return endpoints
 
 
-def _log_changes(current: list[dict[str, Any]]) -> None:
+def _log_changes(current: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     previous: list[dict[str, Any]] = []
     if OUTPUT_FILE.exists():
         try:
@@ -145,22 +146,23 @@ def _log_changes(current: list[dict[str, Any]]) -> None:
         except json.JSONDecodeError:
             previous = []
 
-    current_keys = {
-        (item.get("method"), item.get("path"), item.get("handler", item.get("file", ""))) for item in current
-    }
-    previous_keys = {
-        (item.get("method"), item.get("path"), item.get("handler", item.get("file", ""))) for item in previous
-    }
-
-    added = sorted(current_keys - previous_keys)
-    removed = sorted(previous_keys - current_keys)
+    diff = compare_endpoint_snapshots(previous, current)
+    added = diff["added"]
+    removed = diff["removed"]
 
     if added:
-        logger.info("Detected endpoint additions: %s", ", ".join(f"{m} {p} ({h})" for m, p, h in added))
+        logger.info(
+            "Detected endpoint additions: %s",
+            ", ".join(f"{item['method']} {item['path']} ({item.get('handler', item.get('file', ''))})" for item in added),
+        )
     if removed:
-        logger.info("Detected endpoint removals: %s", ", ".join(f"{m} {p} ({h})" for m, p, h in removed))
+        logger.info(
+            "Detected endpoint removals: %s",
+            ", ".join(f"{item['method']} {item['path']} ({item.get('handler', item.get('file', ''))})" for item in removed),
+        )
     if not added and not removed:
         logger.info("No endpoint changes detected")
+    return diff
 
 
 def main() -> list[dict[str, Any]]:
@@ -174,8 +176,14 @@ def main() -> list[dict[str, Any]]:
         all_endpoints.extend(_collect_endpoints(controller))
 
     all_endpoints.sort(key=lambda item: (item["path"], item["method"], item["handler"]))
-    _log_changes(all_endpoints)
+    diff = _log_changes(all_endpoints)
     OUTPUT_FILE.write_text(json.dumps(all_endpoints, indent=2), encoding="utf-8")
+    record_artifact_version(
+        "endpoints",
+        OUTPUT_FILE,
+        all_endpoints,
+        change_summary=f"added={len(diff['added'])}, removed={len(diff['removed'])}",
+    )
     logger.info("Saved %d endpoint(s) to %s", len(all_endpoints), OUTPUT_FILE.name)
     return all_endpoints
 

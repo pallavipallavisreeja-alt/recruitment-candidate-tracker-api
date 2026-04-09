@@ -30,6 +30,9 @@ jobs:
       - name: Extract Endpoints
         run: python extract_endpoints.py
 
+      - name: Compare Endpoint Versions
+        run: python compare_endpoints.py
+
       - name: Generate OpenAPI Spec
         run: python generate_openapi.py
 
@@ -40,4 +43,5 @@ jobs:
           path: |
             detected_controllers.json
             detected_endpoints.json
+            endpoint_diff.json
             openapi_generated.json

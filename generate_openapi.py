@@ -8,6 +8,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from api_history import record_artifact_version
+
 ROOT = Path(__file__).resolve().parent
 ENDPOINTS_FILE = ROOT / "detected_endpoints.json"
 OUTPUT_FILE = ROOT / "openapi_generated.json"
@@ -315,6 +317,12 @@ def generate_openapi(endpoints_file: str | Path = ENDPOINTS_FILE, output_file: s
 
     output_path = Path(output_file)
     output_path.write_text(json.dumps(openapi, indent=2), encoding="utf-8")
+    record_artifact_version(
+        "openapi",
+        output_path,
+        openapi,
+        change_summary=f"generated_paths={len(openapi['paths'])}",
+    )
     logger.info("OpenAPI specification saved to %s", output_path.name)
     return openapi
 

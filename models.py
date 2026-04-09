@@ -1,4 +1,4 @@
-"""SQLAlchemy models for candidate storage."""
+"""SQLAlchemy models for candidate storage and API history."""
 
 from __future__ import annotations
 
@@ -38,3 +38,17 @@ class Candidate(Base):
             self._skills = json.dumps([item.strip() for item in value.split(",") if item.strip()])
         else:
             self._skills = json.dumps(value)
+
+
+class ApiVersion(Base):
+    """Stored snapshot for generated API artifacts."""
+
+    __tablename__ = "api_versions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    artifact_type = Column(String(50), nullable=False, index=True)
+    version = Column(Integer, nullable=False, index=True)
+    file_path = Column(String(500), nullable=False)
+    content_json = Column(Text, nullable=False)
+    change_summary = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))

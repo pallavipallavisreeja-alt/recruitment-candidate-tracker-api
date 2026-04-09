@@ -283,6 +283,72 @@
           }
         }
       }
+    },
+    "/api/v1/system/generated-docs": {
+      "get": {
+        "summary": "List GeneratedDocs",
+        "description": "List generateddoc records and optionally filter them using query parameters.",
+        "operationId": "get_get_generated_docs",
+        "tags": [
+          "System"
+        ],
+        "responses": {
+          "200": {
+            "description": "Candidate list retrieved successfully.",
+            "headers": {
+              "X-Total-Count": {
+                "description": "Total number of matching candidates before pagination.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Candidate"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/system/versions": {
+      "get": {
+        "summary": "List Versions",
+        "description": "List version records and optionally filter them using query parameters.",
+        "operationId": "get_get_versions",
+        "tags": [
+          "System"
+        ],
+        "responses": {
+          "200": {
+            "description": "Candidate list retrieved successfully.",
+            "headers": {
+              "X-Total-Count": {
+                "description": "Total number of matching candidates before pagination.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Candidate"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

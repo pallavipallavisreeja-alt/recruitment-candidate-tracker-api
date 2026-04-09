@@ -24,6 +24,7 @@ Recruitment Candidate Tracker API built with FastAPI, SQLAlchemy, and Pydantic.
 - `routers/` - API routes
 - `detect_controllers.py` - Finds controller files automatically
 - `extract_endpoints.py` - Extracts endpoints from route decorators
+- `compare_endpoints.py` - Diffs the latest endpoint snapshots
 - `generate_openapi.py` - Builds `openapi_generated.json`
 - `Dockerfile` - Backend container image
 - `docker-compose.yml` - Local backend orchestration
@@ -60,6 +61,9 @@ uvicorn main:app --reload
 
 - `name` - Filter by candidate name
 - `status` - Filter by candidate status
+- `skill` - Filter by skill substring
+- `experience_min` - Minimum years of experience
+- `experience_max` - Maximum years of experience
 - `skip` - Offset for pagination
 - `limit` - Page size
 - `sort_by` - `created_at`, `name`, `experience`, or `status`
@@ -80,7 +84,15 @@ python generate_openapi.py
 This produces:
 - `detected_controllers.json`
 - `detected_endpoints.json`
+- `endpoint_diff.json`
 - `openapi_generated.json`
+
+API artifact versions are also stored in SQLite in the `api_versions` table.
+
+## Generated Docs
+
+- `GET /api/v1/system/generated-docs` returns the generated OpenAPI document
+- `GET /api/v1/system/versions` returns stored API artifact versions
 
 ## Docker
 
@@ -97,4 +109,5 @@ Backend:
 
 - Endpoint descriptions are generated with a rule-based AI-style summarizer so they can be upgraded later to a real LLM.
 - The scripts log controller and endpoint changes to `documentation_keeper.log`.
+- The generated OpenAPI and endpoint snapshots are versioned through the database so you can inspect change history.
 - A good dashboard UI next step would be a small React or Next.js admin panel with candidate cards, filters by status, and an OpenAPI viewer side panel.

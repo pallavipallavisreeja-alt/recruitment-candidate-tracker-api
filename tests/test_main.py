@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -61,6 +61,14 @@ def test_candidate_crud_flow(client: TestClient):
     assert len(list_response.json()) == 1
     assert list_response.headers["X-Total-Count"] == "1"
 
+    skill_response = client.get("/api/v1/candidates/?skill=Python")
+    assert skill_response.status_code == 200
+    assert len(skill_response.json()) == 1
+
+    experience_response = client.get("/api/v1/candidates/?experience_min=4&experience_max=5")
+    assert experience_response.status_code == 200
+    assert len(experience_response.json()) == 1
+
     paged_response = client.get("/api/v1/candidates/?skip=0&limit=1&sort_by=name&sort_order=asc")
     assert paged_response.status_code == 200
     assert len(paged_response.json()) == 1
@@ -93,6 +101,17 @@ def test_candidate_crud_flow(client: TestClient):
     missing_response = client.get(f"/api/v1/candidates/{created['id']}")
     assert missing_response.status_code == 404
 
+
+def test_generated_docs_and_versions(client: TestClient):
+    docs_response = client.get("/api/v1/system/generated-docs")
+    assert docs_response.status_code == 200
+    docs = docs_response.json()
+    assert docs["info"]["title"] == "Recruitment Candidate Tracker API"
+    assert "/api/v1/candidates" in docs["paths"]
+
+    versions_response = client.get("/api/v1/system/versions")
+    assert versions_response.status_code == 200
+    assert isinstance(versions_response.json(), list)
 
 
 def test_email_validation_and_conflict(client: TestClient):

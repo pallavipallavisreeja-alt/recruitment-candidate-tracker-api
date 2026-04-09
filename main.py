@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, ensure_candidate_schema, engine
 from routers.candidates import router as candidates_router
+from routers.system import router as system_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -44,6 +45,7 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(candidates_router)
+    app.include_router(system_router)
     return app
 
 

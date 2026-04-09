@@ -72,6 +72,9 @@ def list_candidates(
     db: Session,
     name: str | None = None,
     status: str | None = None,
+    skill: str | None = None,
+    experience_min: int | None = None,
+    experience_max: int | None = None,
     skip: int = 0,
     limit: int = 10,
     sort_by: str = "created_at",
@@ -82,6 +85,12 @@ def list_candidates(
         query = query.filter(models.Candidate.name.ilike(f"%{name.strip()}%"))
     if status:
         query = query.filter(models.Candidate.status == status)
+    if skill:
+        query = query.filter(models.Candidate._skills.ilike(f"%{skill.strip()}%"))
+    if experience_min is not None:
+        query = query.filter(models.Candidate.experience >= experience_min)
+    if experience_max is not None:
+        query = query.filter(models.Candidate.experience <= experience_max)
 
     total = query.count()
     items = (
