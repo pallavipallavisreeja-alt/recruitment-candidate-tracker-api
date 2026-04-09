@@ -12,7 +12,6 @@ Recruitment Candidate Tracker API built with FastAPI, SQLAlchemy, and Pydantic.
 - Automatic controller discovery
 - AST-based endpoint extraction
 - Dynamic OpenAPI 3.0 generation
-- Docker support
 - CI workflow that runs tests and documentation scripts
 
 ## Project Structure
@@ -27,7 +26,7 @@ Recruitment Candidate Tracker API built with FastAPI, SQLAlchemy, and Pydantic.
 - `extract_endpoints.py` - Extracts endpoints from route decorators
 - `generate_openapi.py` - Builds `openapi_generated.json`
 - `Dockerfile` - Backend container image
-- `docker-compose.yml` - Local backend and frontend orchestration
+- `docker-compose.yml` - Local backend orchestration
 - `.github/workflows/ci.yml` - CI pipeline
 
 ## Local Setup
@@ -85,7 +84,7 @@ This produces:
 
 ## Docker
 
-Run the full stack with Docker Compose:
+Run the backend with Docker Compose:
 
 ```bash
 docker compose up --build
@@ -93,9 +92,6 @@ docker compose up --build
 
 Backend:
 - `http://127.0.0.1:8000/docs`
-
-Frontend:
-- `http://127.0.0.1:3000`
 
 ## Bonus Notes
 
