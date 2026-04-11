@@ -12,6 +12,7 @@ import schemas
 from database import get_db
 
 # ✅ Router must be defined first
+# Router must be defined first
 router = APIRouter(prefix="/api/v1/candidates", tags=["Candidates"])
 
 

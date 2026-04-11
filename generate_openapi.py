@@ -245,6 +245,27 @@ def _operation_for_endpoint(endpoint: dict[str, Any]) -> dict[str, Any]:
                     "description": "Filter candidates by status.",
                 },
                 {
+                    "name": "skill",
+                    "in": "query",
+                    "required": False,
+                    "schema": {"type": "string"},
+                    "description": "Filter candidates by skill substring.",
+                },
+                {
+                    "name": "experience_min",
+                    "in": "query",
+                    "required": False,
+                    "schema": {"type": "integer", "minimum": 0},
+                    "description": "Minimum years of experience.",
+                },
+                {
+                    "name": "experience_max",
+                    "in": "query",
+                    "required": False,
+                    "schema": {"type": "integer", "minimum": 0},
+                    "description": "Maximum years of experience.",
+                },
+                {
                     "name": "skip",
                     "in": "query",
                     "required": False,

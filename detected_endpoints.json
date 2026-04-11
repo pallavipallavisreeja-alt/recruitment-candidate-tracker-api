@@ -6,7 +6,7 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "get_candidates",
-    "line": 32
+    "line": 33
   },
   {
     "method": "POST",
@@ -15,7 +15,7 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "create_candidate",
-    "line": 24
+    "line": 25
   },
   {
     "method": "DELETE",
@@ -24,7 +24,7 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "delete_candidate",
-    "line": 82
+    "line": 83
   },
   {
     "method": "GET",
@@ -33,7 +33,7 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "get_candidate",
-    "line": 64
+    "line": 65
   },
   {
     "method": "PUT",
@@ -42,7 +42,7 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "update_candidate",
-    "line": 72
+    "line": 73
   },
   {
     "method": "GET",

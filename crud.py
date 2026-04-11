@@ -41,16 +41,20 @@ def get_candidate_by_id(db: Session, candidate_id: int) -> models.Candidate:
 
 
 def get_candidate_by_email(db: Session, email: str) -> models.Candidate | None:
-    return _candidate_query(db).filter(func.lower(models.Candidate.email) == email.lower()).first()
+    normalized_email = email.strip().lower()
+    return _candidate_query(db).filter(func.lower(models.Candidate.email) == normalized_email).first()
 
 
 def create_candidate(db: Session, candidate: schemas.CandidateCreate) -> models.Candidate:
-    if get_candidate_by_email(db, candidate.email):
+    normalized_email = candidate.email.strip().lower()
+    normalized_name = candidate.name.strip()
+
+    if get_candidate_by_email(db, normalized_email):
         raise DuplicateCandidateError("Candidate email already exists")
 
     db_candidate = models.Candidate(
-        name=candidate.name.strip(),
-        email=candidate.email.lower(),
+        name=normalized_name,
+        email=normalized_email,
         experience=candidate.experience,
         status=candidate.status,
     )
@@ -110,15 +114,18 @@ def update_candidate(
     candidate = get_candidate_by_id(db, candidate_id)
     data = candidate_data.model_dump(exclude_unset=True)
 
-    if "email" in data and data["email"] and data["email"].lower() != candidate.email.lower():
-        if get_candidate_by_email(db, data["email"]):
+    if "email" in data and data["email"]:
+        normalized_email = data["email"].strip().lower()
+        if normalized_email != candidate.email.strip().lower() and get_candidate_by_email(db, normalized_email):
             raise DuplicateCandidateError("Candidate email already exists")
 
     for key, value in data.items():
         if key == "skills":
             candidate.skills = value
         elif key == "email" and value:
-            setattr(candidate, key, value.lower())
+            setattr(candidate, key, value.strip().lower())
+        elif key == "name" and value:
+            setattr(candidate, key, value.strip())
         elif value is not None:
             setattr(candidate, key, value)
 
