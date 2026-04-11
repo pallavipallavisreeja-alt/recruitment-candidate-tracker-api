@@ -7,7 +7,6 @@ Recruitment Candidate Tracker API built with FastAPI, SQLAlchemy, and Pydantic.
 - Full CRUD for candidates
 - Validation with `EmailStr` and typed schemas
 - Pagination, sorting, and status filtering
-- Partial updates with `PATCH`
 - SQLite persistence
 - Automatic controller discovery
 - AST-based endpoint extraction
@@ -55,7 +54,6 @@ uvicorn main:app --reload
 - `GET /api/v1/candidates/`
 - `GET /api/v1/candidates/{candidate_id}`
 - `PUT /api/v1/candidates/{candidate_id}`
-- `PATCH /api/v1/candidates/{candidate_id}`
 - `DELETE /api/v1/candidates/{candidate_id}`
 
 ### Query Parameters

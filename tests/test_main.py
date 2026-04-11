@@ -86,14 +86,6 @@ def test_candidate_crud_flow(client: TestClient):
     assert get_response.status_code == 200
     assert get_response.json()["name"] == "Ava Patel"
 
-    patch_response = client.patch(
-        f"/api/v1/candidates/{created['id']}",
-        json={"status": "interview"},
-    )
-    assert patch_response.status_code == 200
-    assert patch_response.json()["status"] == "interview"
-    assert patch_response.json()["experience"] == 5
-
     delete_response = client.delete(f"/api/v1/candidates/{created['id']}")
     assert delete_response.status_code == 204
 

@@ -132,14 +132,6 @@ def update_candidate(
     return candidate
 
 
-def patch_candidate(
-    db: Session,
-    candidate_id: int,
-    candidate_data: schemas.CandidateUpdate,
-) -> models.Candidate:
-    return update_candidate(db, candidate_id, candidate_data)
-
-
 def delete_candidate(db: Session, candidate_id: int) -> models.Candidate:
     candidate = get_candidate_by_id(db, candidate_id)
     db.delete(candidate)

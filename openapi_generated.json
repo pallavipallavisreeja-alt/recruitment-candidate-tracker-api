@@ -201,47 +201,6 @@
           }
         ]
       },
-      "patch": {
-        "summary": "Patch Candidate",
-        "description": "Partially update an existing candidate record.",
-        "operationId": "patch_patch_candidate",
-        "tags": [
-          "Candidates"
-        ],
-        "responses": {
-          "200": {
-            "description": "Candidate updated successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Candidate"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "candidate_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Path parameter `candidate_id`."
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CandidateUpdate"
-              }
-            }
-          }
-        }
-      },
       "put": {
         "summary": "Put Candidate",
         "description": "Update an existing candidate record using the payload supplied by the caller.",
