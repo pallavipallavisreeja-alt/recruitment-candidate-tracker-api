@@ -1,4 +1,4 @@
-"""Candidate API routes."""
+﻿"""Candidate API routes."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ import crud
 import schemas
 from database import get_db
 
+# ✅ Router must be defined first
 router = APIRouter(prefix="/api/v1/candidates", tags=["Candidates"])
 
 
@@ -77,20 +78,9 @@ def update_candidate(candidate_id: int, candidate: schemas.CandidateUpdate, db: 
         raise HTTPException(status_code=http_status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
 
-@router.patch("/{candidate_id}", response_model=schemas.CandidateRead, summary="Patch candidate")
-def patch_candidate(candidate_id: int, candidate: schemas.CandidateUpdate, db: Session = Depends(get_db)):
-    try:
-        return crud.patch_candidate(db, candidate_id, candidate)
-    except crud.CandidateNotFoundError as exc:
-        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
-    except crud.DuplicateCandidateError as exc:
-        raise HTTPException(status_code=http_status.HTTP_409_CONFLICT, detail=str(exc)) from exc
-
-
 @router.delete("/{candidate_id}", status_code=http_status.HTTP_204_NO_CONTENT, summary="Delete candidate")
 def delete_candidate(candidate_id: int, db: Session = Depends(get_db)):
     try:
         crud.delete_candidate(db, candidate_id)
     except crud.CandidateNotFoundError as exc:
         raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
-    return Response(status_code=http_status.HTTP_204_NO_CONTENT)
