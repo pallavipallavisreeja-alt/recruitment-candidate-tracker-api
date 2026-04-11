@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-TEST_DB_PATH = Path(tempfile.gettempdir()) / "recruitment_test.db"
+TEST_DB_PATH = Path(tempfile.gettempdir()) / f"recruitment_test_{os.getpid()}.db"
 os.environ["DATABASE_URL"] = f"sqlite:///{TEST_DB_PATH.as_posix()}"
 
 from database import Base, engine  # noqa: E402
@@ -18,10 +18,12 @@ from main import app  # noqa: E402
 
 @pytest.fixture(autouse=True)
 def reset_database():
-    Base.metadata.drop_all(bind=engine)
+    engine.dispose()
+    TEST_DB_PATH.unlink(missing_ok=True)
     Base.metadata.create_all(bind=engine)
     yield
-    Base.metadata.drop_all(bind=engine)
+    engine.dispose()
+    TEST_DB_PATH.unlink(missing_ok=True)
 
 
 @pytest.fixture()
