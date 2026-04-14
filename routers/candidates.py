@@ -1,4 +1,4 @@
-﻿"""Candidate API routes."""
+"""Candidate API routes."""
 
 from __future__ import annotations
 
