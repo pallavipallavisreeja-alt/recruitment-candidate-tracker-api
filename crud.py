@@ -144,3 +144,5 @@ def delete_candidate(db: Session, candidate_id: int) -> models.Candidate:
     db.delete(candidate)
     db.commit()
     return candidate
+
+#test non api change
