@@ -20,7 +20,7 @@ router = APIRouter(prefix="/api/v1/candidates", tags=["Candidates"])
     "/",
     response_model=schemas.CandidateRead,
     status_code=http_status.HTTP_201_CREATED,
-    summary="Create candidate API",
+    summary="Create a new candidate profile",
 )
 def create_candidate(candidate: schemas.CandidateCreate, db: Session = Depends(get_db)):
     try:
