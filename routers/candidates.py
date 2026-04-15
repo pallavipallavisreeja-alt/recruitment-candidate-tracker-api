@@ -87,3 +87,6 @@ def delete_candidate(candidate_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 #test non api change
+@router.get("/demo")
+def demo():
+    return {"message": "demo working"}
