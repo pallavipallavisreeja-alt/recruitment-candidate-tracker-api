@@ -20,7 +20,7 @@ router = APIRouter(prefix="/api/v1/candidates", tags=["Candidates"])
     "/",
     response_model=schemas.CandidateRead,
     status_code=http_status.HTTP_201_CREATED,
-    summary="Create a new candidate profile",
+    summary="Get candidates update",
 )
 def create_candidate(candidate: schemas.CandidateCreate, db: Session = Depends(get_db)):
     try:
@@ -33,6 +33,7 @@ def create_candidate(candidate: schemas.CandidateCreate, db: Session = Depends(g
 def get_candidates(
     response: Response,
     name: str | None = Query(default=None, description="Case-insensitive candidate name filter"),
+    email: str | none = Query(default=None, description="Case-insensitive candidate email filter"),
     status: schemas.CandidateStatus | None = Query(default=None, description="Filter by candidate status"),
     skill: str | None = Query(default=None, description="Filter by skill substring"),
     experience_min: int | None = Query(default=None, ge=0, description="Minimum years of experience"),
@@ -90,3 +91,7 @@ def delete_candidate(candidate_id: int, db: Session = Depends(get_db)):
 @router.get("/demo")
 def demo():
     return {"message": "demo working"}
+
+@router.get("/health")
+def health_check():
+    return {"status": "API is healthy"}

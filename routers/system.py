@@ -27,7 +27,7 @@ def get_generated_docs():
     with open(OPENAPI_PATH) as f:
         return json.load(f)
 
-@router.get("/versions", summary="List API artifact versions")
+@router.get("/versions", summary="List API  versions")
 def get_versions():
     return [
         {"version": "v1", "status": "active"},
