@@ -16,6 +16,11 @@ def test_classify_change_labels_non_api_files() -> None:
     assert classify_change("tests/test_main.py") == "non-api"
 
 
+def test_classify_change_ignores_generated_artifacts() -> None:
+    assert classify_change("change_report.json") == "ignored"
+    assert classify_change("openapi_generated.json") == "ignored"
+
+
 def test_build_change_report_groups_changes() -> None:
     changes = [
         {

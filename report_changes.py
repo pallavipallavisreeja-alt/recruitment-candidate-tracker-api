@@ -30,6 +30,15 @@ API_FILE_NAMES = {
     "crud.py",
 }
 
+IGNORED_FILES = {
+    "change_report.json",
+    "detected_controllers.json",
+    "detected_endpoints.json",
+    "documentation_keeper.log",
+    "endpoint_diff.json",
+    "openapi_generated.json",
+}
+
 logger = logging.getLogger("documentation_keeper.report_changes")
 
 
@@ -81,6 +90,8 @@ def classify_change(path: str) -> str:
     """Return `api` for API-related files and `non-api` for everything else."""
 
     normalized = _normalize_path(path)
+    if normalized in IGNORED_FILES:
+        return "ignored"
     if normalized.startswith(API_DIR_PREFIXES) or normalized in API_FILE_NAMES:
         return "api"
     return "non-api"
@@ -132,6 +143,8 @@ def _load_changed_files(base_ref: str, head_ref: str | None) -> list[dict[str, A
             continue
         parsed = _parse_name_status_line(line)
         path = _normalize_diff_path(parsed["path"])
+        if classify_change(path) == "ignored":
+            continue
         added, deleted = numstat_by_path.get(path, (0, 0))
         classification = classify_change(path)
         changes.append(

@@ -28,6 +28,45 @@ jobs:
       - name: Report Repository Changes
         run: python report_changes.py
 
+      - name: Summarize Repository Changes
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+
+          report = json.loads(pathlib.Path("change_report.json").read_text(encoding="utf-8"))
+          summary = report["summary"]
+
+          lines = [
+              "## Repository Change Summary",
+              f"- Total files: {summary['total_files']}",
+              f"- API files: {summary['api_files']}",
+              f"- Non-API files: {summary['non_api_files']}",
+              "",
+              "### API Changes",
+          ]
+          if report["api_changes"]:
+              lines.extend(
+                  f"- {item['status']} {item['path']} (+{item['added_lines']} / -{item['deleted_lines']})"
+                  for item in report["api_changes"]
+              )
+          else:
+              lines.append("- None")
+
+          lines.extend(["", "### Non-API Changes"])
+          if report["non_api_changes"]:
+              lines.extend(
+                  f"- {item['status']} {item['path']} (+{item['added_lines']} / -{item['deleted_lines']})"
+                  for item in report["non_api_changes"]
+              )
+          else:
+              lines.append("- None")
+
+          pathlib.Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
       - name: Run Tests
         run: python -m pytest
 

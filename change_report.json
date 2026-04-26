@@ -5,54 +5,53 @@
   },
   "summary": {
     "total_files": 3,
-    "api_files": 1,
-    "non_api_files": 2,
-    "added_lines": 11,
-    "deleted_lines": 1
+    "api_files": 0,
+    "non_api_files": 3,
+    "added_lines": 57,
+    "deleted_lines": 0
   },
   "changes": [
     {
       "status": "M",
-      "path": "routers/candidates.py",
-      "classification": "api",
-      "added_lines": 0,
-      "deleted_lines": 1
-    },
-    {
-      "status": "M",
       "path": ".github/workflows/ci.yml",
       "classification": "non-api",
-      "added_lines": 6,
+      "added_lines": 39,
       "deleted_lines": 0
     },
     {
       "status": "M",
-      "path": "README.md",
+      "path": "report_changes.py",
+      "classification": "non-api",
+      "added_lines": 13,
+      "deleted_lines": 0
+    },
+    {
+      "status": "M",
+      "path": "tests/test_report_changes.py",
       "classification": "non-api",
       "added_lines": 5,
       "deleted_lines": 0
     }
   ],
-  "api_changes": [
-    {
-      "status": "M",
-      "path": "routers/candidates.py",
-      "classification": "api",
-      "added_lines": 0,
-      "deleted_lines": 1
-    }
-  ],
+  "api_changes": [],
   "non_api_changes": [
     {
       "status": "M",
       "path": ".github/workflows/ci.yml",
       "classification": "non-api",
-      "added_lines": 6,
+      "added_lines": 39,
       "deleted_lines": 0
     },
     {
       "status": "M",
-      "path": "README.md",
+      "path": "report_changes.py",
+      "classification": "non-api",
+      "added_lines": 13,
+      "deleted_lines": 0
+    },
+    {
+      "status": "M",
+      "path": "tests/test_report_changes.py",
       "classification": "non-api",
       "added_lines": 5,
       "deleted_lines": 0
