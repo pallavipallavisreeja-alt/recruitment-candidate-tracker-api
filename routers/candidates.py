@@ -33,7 +33,6 @@ def create_candidate(candidate: schemas.CandidateCreate, db: Session = Depends(g
 def get_candidates(
     response: Response,
     name: str | None = Query(default=None, description="Case-insensitive candidate name filter"),
-    email: str | none = Query(default=None, description="Case-insensitive candidate email filter"),
     status: schemas.CandidateStatus | None = Query(default=None, description="Filter by candidate status"),
     skill: str | None = Query(default=None, description="Filter by skill substring"),
     experience_min: int | None = Query(default=None, ge=0, description="Minimum years of experience"),

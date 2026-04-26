@@ -22,6 +22,7 @@ Recruitment Candidate Tracker API built with FastAPI, SQLAlchemy, and Pydantic.
 - `crud.py` - Database logic and business rules
 - `routers/` - API routes
 - `detect_controllers.py` - Finds controller files automatically
+- `report_changes.py` - Reports repo changes and splits API vs non-API updates
 - `extract_endpoints.py` - Extracts endpoints from route decorators
 - `compare_endpoints.py` - Diffs the latest endpoint snapshots
 - `generate_openapi.py` - Builds `openapi_generated.json`
@@ -75,12 +76,15 @@ The list endpoint returns the total count in the `X-Total-Count` response header
 Run the documentation workflow manually if needed:
 
 ```bash
+python report_changes.py
 python detect_controllers.py
 python extract_endpoints.py
+python compare_endpoints.py
 python generate_openapi.py
 ```
 
 This produces:
+- `change_report.json`
 - `detected_controllers.json`
 - `detected_endpoints.json`
 - `endpoint_diff.json`
@@ -121,6 +125,7 @@ When the workflow passes, GitHub Actions will trigger the Render deployment auto
 
 - Endpoint descriptions are generated with a rule-based AI-style summarizer so they can be upgraded later to a real LLM.
 - The scripts log controller and endpoint changes to `documentation_keeper.log`.
+- The pipeline now logs all repository changes and labels each one as API or non-API.
 - The generated OpenAPI and endpoint snapshots are versioned through the database so you can inspect change history.
 - A good dashboard UI next step would be a small React or Next.js admin panel with candidate cards, filters by status, and an OpenAPI viewer side panel.
 
