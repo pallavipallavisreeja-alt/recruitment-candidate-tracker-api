@@ -11,7 +11,7 @@ Recruitment Candidate Tracker API built with FastAPI, SQLAlchemy, and Pydantic.
 - Automatic controller discovery
 - AST-based endpoint extraction
 - Dynamic OpenAPI 3.0 generation
-- CI workflow that runs tests and documentation scripts
+- CI workflow that runs tests and analyzes repository changes, and generates API documentation with change classification
 
 ## Project Structure
 
