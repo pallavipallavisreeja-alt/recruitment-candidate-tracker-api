@@ -86,11 +86,10 @@ def delete_candidate(candidate_id: int, db: Session = Depends(get_db)):
     except crud.CandidateNotFoundError as exc:
         raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
-#test non api change
-@router.get("/demo")
+@router.get("/demo", summary="Demo API endpoint")
 def demo():
     return {"message": "demo working"}
 
-@router.get("/health")
+@router.get("/health", summary="Health check endpoint")
 def health_check():
     return {"status": "API is healthy"}
