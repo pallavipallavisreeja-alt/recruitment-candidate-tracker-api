@@ -1,4 +1,15 @@
 {
   "added": [],
-  "removed": []
+  "removed": [],
+  "modified": [
+    {
+      "method": "GET",
+      "path": "/api/v1/candidates",
+      "added_parameters": [],
+      "removed_parameters": [
+        "department"
+      ],
+      "impact": "Breaking"
+    }
+  ]
 }

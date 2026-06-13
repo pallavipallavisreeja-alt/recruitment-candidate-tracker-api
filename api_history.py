@@ -122,7 +122,37 @@ def compare_endpoint_snapshots(
     added = [current_map[key] for key in sorted(current_map.keys() - previous_map.keys())]
     removed = [previous_map[key] for key in sorted(previous_map.keys() - current_map.keys())]
 
+    modified = []
+
+    common_keys = previous_map.keys() & current_map.keys()
+
+    for key in common_keys:
+        old = previous_map[key]
+        new = current_map[key]
+
+        old_params = set(old.get("parameters", []))
+        new_params = set(new.get("parameters", []))
+
+        added_params = list(new_params - old_params)
+        removed_params = list(old_params - new_params)
+
+        if added_params or removed_params:
+            modified.append(
+                {
+                    "method": new.get("method"),
+                    "path": new.get("path"),
+                    "added_parameters": added_params,
+                    "removed_parameters": removed_params,
+                    "impact": (
+                        "Breaking"
+                        if removed_params
+                        else "Non-breaking"
+                    ),
+                }
+            )
+
     return {
         "added": added,
         "removed": removed,
+        "modified": modified,
     }

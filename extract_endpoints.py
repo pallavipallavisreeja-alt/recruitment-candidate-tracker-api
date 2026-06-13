@@ -123,6 +123,12 @@ def _collect_endpoints(file_path: Path) -> list[dict[str, Any]]:
 
             prefix = router_prefixes.get(router_name or "", "")
             full_path = _combine_paths(prefix, route_path)
+            
+            parameters = []
+            for arg in node.args.args:
+                if arg.arg != "self":
+                    parameters.append(arg.arg)
+            
             endpoints.append(
                 {
                     "method": method,
@@ -132,6 +138,7 @@ def _collect_endpoints(file_path: Path) -> list[dict[str, Any]]:
                     "file": str(file_path.relative_to(ROOT)),
                     "handler": node.name,
                     "line": node.lineno,
+                    "parameters": parameters,
                 }
             )
 

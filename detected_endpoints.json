@@ -6,7 +6,20 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "get_candidates",
-    "line": 33
+    "line": 44,
+    "parameters": [
+      "response",
+      "name",
+      "status",
+      "skill",
+      "experience_min",
+      "experience_max",
+      "skip",
+      "limit",
+      "sort_by",
+      "sort_order",
+      "db"
+    ]
   },
   {
     "method": "POST",
@@ -15,7 +28,33 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "create_candidate",
-    "line": 25
+    "line": 33,
+    "parameters": [
+      "candidate",
+      "db"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/candidates/demo",
+    "raw_path": "/demo",
+    "router_prefix": "/api/v1/candidates",
+    "file": "routers\\candidates.py",
+    "handler": "demo",
+    "line": 18,
+    "parameters": [
+      "name"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/candidates/health",
+    "raw_path": "/health",
+    "router_prefix": "/api/v1/candidates",
+    "file": "routers\\candidates.py",
+    "handler": "health_check",
+    "line": 23,
+    "parameters": []
   },
   {
     "method": "DELETE",
@@ -24,7 +63,11 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "delete_candidate",
-    "line": 83
+    "line": 90,
+    "parameters": [
+      "candidate_id",
+      "db"
+    ]
   },
   {
     "method": "GET",
@@ -33,7 +76,11 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "get_candidate",
-    "line": 65
+    "line": 101,
+    "parameters": [
+      "candidate_id",
+      "db"
+    ]
   },
   {
     "method": "PUT",
@@ -42,7 +89,12 @@
     "router_prefix": "/api/v1/candidates",
     "file": "routers\\candidates.py",
     "handler": "update_candidate",
-    "line": 73
+    "line": 74,
+    "parameters": [
+      "candidate_id",
+      "candidate",
+      "db"
+    ]
   },
   {
     "method": "GET",
@@ -51,7 +103,8 @@
     "router_prefix": "/api/v1/system",
     "file": "routers\\system.py",
     "handler": "get_generated_docs",
-    "line": 18
+    "line": 19,
+    "parameters": []
   },
   {
     "method": "GET",
@@ -60,6 +113,7 @@
     "router_prefix": "/api/v1/system",
     "file": "routers\\system.py",
     "handler": "get_versions",
-    "line": 28
+    "line": 31,
+    "parameters": []
   }
 ]
