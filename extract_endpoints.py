@@ -24,7 +24,10 @@ def _configure_logging() -> None:
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
-        handlers=[logging.FileHandler(LOG_FILE, encoding="utf-8"), logging.StreamHandler()],
+        handlers=[
+            logging.FileHandler(LOG_FILE, encoding="utf-8"),
+            logging.StreamHandler(),
+        ],
     )
 
 
@@ -118,17 +121,20 @@ def _collect_endpoints(file_path: Path) -> list[dict[str, Any]]:
                 continue
 
             router_name = None
-            if isinstance(decorator, ast.Call) and isinstance(decorator.func, ast.Attribute) and isinstance(decorator.func.value, ast.Name):
+            if (
+                isinstance(decorator, ast.Call)
+                and isinstance(decorator.func, ast.Attribute)
+                and isinstance(decorator.func.value, ast.Name)
+            ):
                 router_name = decorator.func.value.id
 
             prefix = router_prefixes.get(router_name or "", "")
             full_path = _combine_paths(prefix, route_path)
-            
-            parameters = []
-            for arg in node.args.args:
-                if arg.arg != "self":
-                    parameters.append(arg.arg)
-            
+
+            parameters = [
+                arg.arg for arg in node.args.args if arg.arg != "self"
+            ]
+
             endpoints.append(
                 {
                     "method": method,
@@ -145,30 +151,56 @@ def _collect_endpoints(file_path: Path) -> list[dict[str, Any]]:
     return endpoints
 
 
+# ✅ FIXED PART (THIS IS THE IMPORTANT CHANGE)
 def _log_changes(current: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+
     previous: list[dict[str, Any]] = []
+
     if OUTPUT_FILE.exists():
         try:
             previous = json.loads(OUTPUT_FILE.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
             previous = []
 
-    diff = is_breaking_change(previous, current)
-    added = diff["added"]
-    removed = diff["removed"]
+    previous_map = {(e["method"], e["path"]): e for e in previous}
+    current_map = {(e["method"], e["path"]): e for e in current}
 
-    if added:
-        logger.info(
-            "Detected endpoint additions: %s",
-            ", ".join(f"{item['method']} {item['path']} ({item.get('handler', item.get('file', ''))})" for item in added),
-        )
-    if removed:
-        logger.info(
-            "Detected endpoint removals: %s",
-            ", ".join(f"{item['method']} {item['path']} ({item.get('handler', item.get('file', ''))})" for item in removed),
-        )
-    if not added and not removed:
-        logger.info("No endpoint changes detected")
+    added = [v for k, v in current_map.items() if k not in previous_map]
+    removed = [v for k, v in previous_map.items() if k not in current_map]
+
+    modified = []
+
+    for key in previous_map.keys() & current_map.keys():
+        old = previous_map[key]
+        new = current_map[key]
+
+        old_params = set(old.get("parameters", []))
+        new_params = set(new.get("parameters", []))
+
+        added_params = new_params - old_params
+        removed_params = old_params - new_params
+
+        if is_breaking_change(
+            old,
+            new,
+            list(added_params),
+            list(removed_params),
+        ):
+            modified.append(
+                {
+                    "method": new["method"],
+                    "path": new["path"],
+                    "handler": new.get("handler"),
+                    "type": "breaking",
+                }
+            )
+
+    diff = {
+        "added": added,
+        "removed": removed,
+        "modified": modified,
+    }
+
     return diff
 
 
@@ -183,15 +215,20 @@ def main() -> list[dict[str, Any]]:
         all_endpoints.extend(_collect_endpoints(controller))
 
     all_endpoints.sort(key=lambda item: (item["path"], item["method"], item["handler"]))
+
     diff = _log_changes(all_endpoints)
+
     OUTPUT_FILE.write_text(json.dumps(all_endpoints, indent=2), encoding="utf-8")
+
     record_artifact_version(
         "endpoints",
         OUTPUT_FILE,
         all_endpoints,
         change_summary=f"added={len(diff['added'])}, removed={len(diff['removed'])}",
     )
+
     logger.info("Saved %d endpoint(s) to %s", len(all_endpoints), OUTPUT_FILE.name)
+
     return all_endpoints
 
 
