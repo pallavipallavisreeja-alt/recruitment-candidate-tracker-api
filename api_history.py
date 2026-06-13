@@ -106,6 +106,31 @@ def latest_versions(artifact_type: str, limit: int = 2) -> list[ApiVersion]:
     finally:
         db.close()
 
+def compare_endpoint_snapshots(previous, current):
+    previous_map = {(e["method"], e["path"]): e for e in previous}
+    current_map = {(e["method"], e["path"]): e for e in current}
+
+    added = [v for k, v in current_map.items() if k not in previous_map]
+    removed = [v for k, v in previous_map.items() if k not in current_map]
+
+    modified = []
+
+    for key in previous_map.keys() & current_map.keys():
+        old = previous_map[key]
+        new = current_map[key]
+
+        if old.get("parameters") != new.get("parameters"):
+            modified.append({
+                "method": new["method"],
+                "path": new["path"],
+                "type": "modified"
+            })
+
+    return {
+        "added": added,
+        "removed": removed,
+        "modified": modified
+    }
 
 def is_breaking_change(old: dict, new: dict, added_params, removed_params) -> bool:
     """
