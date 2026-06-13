@@ -107,52 +107,23 @@ def latest_versions(artifact_type: str, limit: int = 2) -> list[ApiVersion]:
         db.close()
 
 
-def compare_endpoint_snapshots(
-    previous: list[dict[str, Any]],
-    current: list[dict[str, Any]],
-) -> dict[str, list[dict[str, Any]]]:
-    """Compare two endpoint snapshots and return the structural diff."""
+def is_breaking_change(old: dict, new: dict, added_params, removed_params) -> bool:
+    """
+    Detects whether an API change is breaking.
+    """
 
-    def signature(endpoint: dict[str, Any]) -> tuple[str | None, str | None]:
-        return endpoint.get("method"), endpoint.get("path")
+    # 1. Parameter removal is always breaking
+    if removed_params:
+        return True
 
-    previous_map = {signature(item): item for item in previous}
-    current_map = {signature(item): item for item in current}
+    # 2. Method change is breaking (GET → POST etc.)
+    if old.get("method") != new.get("method"):
+        return True
 
-    added = [current_map[key] for key in sorted(current_map.keys() - previous_map.keys())]
-    removed = [previous_map[key] for key in sorted(previous_map.keys() - current_map.keys())]
-
-    modified = []
-
-    common_keys = previous_map.keys() & current_map.keys()
-
-    for key in common_keys:
-        old = previous_map[key]
-        new = current_map[key]
-
-        old_params = set(old.get("parameters", []))
-        new_params = set(new.get("parameters", []))
-
-        added_params = list(new_params - old_params)
-        removed_params = list(old_params - new_params)
-
-        if added_params or removed_params:
-            modified.append(
-                {
-                    "method": new.get("method"),
-                    "path": new.get("path"),
-                    "added_parameters": added_params,
-                    "removed_parameters": removed_params,
-                    "impact": (
-                        "Breaking"
-                        if removed_params
-                        else "Non-breaking"
-                    ),
-                }
-            )
-
-    return {
-        "added": added,
-        "removed": removed,
-        "modified": modified,
-    }
+    # 3. Path change is breaking (/users → /user)
+    if old.get("path") != new.get("path"):
+        return True
+    # 4. New required parameters (optional improvement)
+    if len(added_params) > 0 and not old.get("optional", True):
+        return True
+    return False

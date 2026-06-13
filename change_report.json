@@ -4,57 +4,29 @@
     "head": "WORKTREE"
   },
   "summary": {
-    "total_files": 3,
-    "api_files": 0,
-    "non_api_files": 3,
-    "added_lines": 57,
-    "deleted_lines": 0
+    "total_files": 1,
+    "api_files": 1,
+    "non_api_files": 0,
+    "added_lines": 20,
+    "deleted_lines": 49
   },
   "changes": [
     {
       "status": "M",
-      "path": ".github/workflows/ci.yml",
-      "classification": "non-api",
-      "added_lines": 39,
-      "deleted_lines": 0
-    },
-    {
-      "status": "M",
-      "path": "report_changes.py",
-      "classification": "non-api",
-      "added_lines": 13,
-      "deleted_lines": 0
-    },
-    {
-      "status": "M",
-      "path": "tests/test_report_changes.py",
-      "classification": "non-api",
-      "added_lines": 5,
-      "deleted_lines": 0
+      "path": "api_history.py",
+      "classification": "api",
+      "added_lines": 20,
+      "deleted_lines": 49
     }
   ],
-  "api_changes": [],
-  "non_api_changes": [
+  "api_changes": [
     {
       "status": "M",
-      "path": ".github/workflows/ci.yml",
-      "classification": "non-api",
-      "added_lines": 39,
-      "deleted_lines": 0
-    },
-    {
-      "status": "M",
-      "path": "report_changes.py",
-      "classification": "non-api",
-      "added_lines": 13,
-      "deleted_lines": 0
-    },
-    {
-      "status": "M",
-      "path": "tests/test_report_changes.py",
-      "classification": "non-api",
-      "added_lines": 5,
-      "deleted_lines": 0
+      "path": "api_history.py",
+      "classification": "api",
+      "added_lines": 20,
+      "deleted_lines": 49
     }
-  ]
+  ],
+  "non_api_changes": []
 }
