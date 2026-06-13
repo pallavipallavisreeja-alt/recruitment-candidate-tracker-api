@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from api_history import compare_endpoint_snapshots, record_artifact_version
+from api_history import is_breaking_change, record_artifact_version
 from detect_controllers import find_controller_files
 
 ROOT = Path(__file__).resolve().parent
@@ -153,7 +153,7 @@ def _log_changes(current: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]
         except json.JSONDecodeError:
             previous = []
 
-    diff = compare_endpoint_snapshots(previous, current)
+    diff = is_breaking_change(previous, current)
     added = diff["added"]
     removed = diff["removed"]
 
